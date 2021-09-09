@@ -88,7 +88,7 @@ void GET_VAL(void){
 
 void SPLIT_STRING(void){
   int count = 0;
-    while(count < 6){
+    while(count < 11){
     ADC_STRING_IN = Serial.readStringUntil('\n');
     if(ADC_STRING_IN.substring(1,6) == "Vbatt" ){
       VBATT_ADC_STRING = ADC_STRING_IN.substring(8,15);
@@ -108,8 +108,8 @@ void SPLIT_STRING(void){
       VSOLAR_ADC += RawVSOLAR_ADC;
       count++;
     }
-    if(count == 5){
-        VBATT_ADC = VBATT_ADC/6; IBATT_ADC = IBATT_ADC/6; VSOLAR_ADC = VSOLAR_ADC/6;
+    if(count == 10){
+        VBATT_ADC = VBATT_ADC/11; IBATT_ADC = IBATT_ADC/11; VSOLAR_ADC = VSOLAR_ADC/11;
         GET_VBATT();
         GET_LOAD_CURRENT();
         if(LOAD_CURRENT > 1.5){
