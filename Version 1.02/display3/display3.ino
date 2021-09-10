@@ -58,6 +58,7 @@ void setup()
     ID = tft.readID();
     Serial.println(ID, HEX);
     //if (ID == 0x0D3D3) ID = 0x9481;
+    EEPROM.put(eeaddress,125);
     tft.begin(ID);
     tft.setRotation(-1);
     bool good = SD.begin(SD_CS);

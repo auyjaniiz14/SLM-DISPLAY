@@ -70,15 +70,30 @@ void GET_BATT_PERCENT(void){
     }
   }
   if(ChargingState == false && DischargingState == false){
-    BATT_PERCENT = (VBATT_TRUE - 10) / 0.027;
-    if(BATT_PERCENT > 100){
-      BATT_PERCENT = 100;
+    eedata = EEPROM.read(eeaddress);
+    SOCt0 = (eedata / 2.55) + 1;
+    BATT_PERCENT = SOCt0;
+    int BATT_PERCENT2 = (VBATT_TRUE - 10) / 0.027;
+    if(SOCt0 > BATT_PERCENT2){
+      BATT_PERCENT = SOCt0;
+      if(BATT_PERCENT > 100){
+        BATT_PERCENT = 100;
+      }
+      else if(BATT_PERCENT < 0){
+        BATT_PERCENT = 0;
+      }
     }
-    else if(BATT_PERCENT < 0){
-      BATT_PERCENT = 0;
+    else if(SOCt0 <= BATT_PERCENT2){
+      BATT_PERCENT = BATT_PERCENT2;
+      if(BATT_PERCENT > 100){
+        BATT_PERCENT = 100;
+      }
+      else if(BATT_PERCENT < 0){
+        BATT_PERCENT = 0;
+      }
+      int EEinput = BATT_PERCENT*2.55;
+      EEPROM.put(eeaddress,EEinput);
     }
-    int EEinput = BATT_PERCENT*2.55;
-    EEPROM.put(eeaddress,EEinput);
   }
 }
 
@@ -88,7 +103,7 @@ void GET_VAL(void){
 
 void SPLIT_STRING(void){
   int count = 0;
-    while(count < 11){
+    while(count < 6){
     ADC_STRING_IN = Serial.readStringUntil('\n');
     if(ADC_STRING_IN.substring(1,6) == "Vbatt" ){
       VBATT_ADC_STRING = ADC_STRING_IN.substring(8,15);
@@ -108,8 +123,8 @@ void SPLIT_STRING(void){
       VSOLAR_ADC += RawVSOLAR_ADC;
       count++;
     }
-    if(count == 10){
-        VBATT_ADC = VBATT_ADC/11; IBATT_ADC = IBATT_ADC/11; VSOLAR_ADC = VSOLAR_ADC/11;
+    if(count == 5){
+        VBATT_ADC = VBATT_ADC/6; IBATT_ADC = IBATT_ADC/6; VSOLAR_ADC = VSOLAR_ADC/6;
         GET_VBATT();
         GET_LOAD_CURRENT();
         if(LOAD_CURRENT > 1.5){
@@ -130,11 +145,6 @@ void SPLIT_STRING(void){
         GET_IBATT();
         GET_BATT_PERCENT();
         GET_SOLAR_POWER(); GET_LOAD_POWER();
-        //Serial.print("IBATT_ADC : "); Serial.print(IBATT_ADC); Serial.println(" ADC");
-        //Serial.print("Load current : "); Serial.print(LOAD_CURRENT); Serial.println(" A");
-        //Serial.print("DischargingState : "); Serial.println(DischargingState);
-        //Serial.print("Qouttotal : "); Serial.println(Qouttotal);
-        //Serial.print("Percent : "); Serial.println(BATT_PERCENT);
         return count = 0;
      }
    }
