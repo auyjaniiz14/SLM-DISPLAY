@@ -32,10 +32,10 @@ void GET_LOAD_CURRENT(void){
 }
 
 void GET_LOAD_POWER(void){
-  LOAD_POWER_TRUE = (VBATT_TRUE * LOAD_CURRENT)-15;
+  LOAD_POWER_TRUE = (VBATT_TRUE * LOAD_CURRENT) - 4; // Watt true
   if(ChargingState == true){
     //LOAD_POWER_TRUE = LOAD_POWER_TRUE;
-    LOAD_POWER_TRUE = LOAD_POWER_TRUE - 10;
+    LOAD_POWER_TRUE = LOAD_POWER_TRUE;
   }
   if(LOAD_POWER_TRUE < 0){
     LOAD_POWER_TRUE = 0;
@@ -216,7 +216,7 @@ double GET_IBATT_OUT(){
   }
   istVoltage = istVoltage/100;
   double v = (istVoltage / 1023.0) * 5000;
-  double c = ((v - 2525)/100)-0.3;
+  double c = ((v - 2525)/100) - 0.2; // 2525
   if(c < 0){
     c = 0;
   }
